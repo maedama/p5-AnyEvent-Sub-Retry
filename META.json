@@ -1,5 +1,5 @@
 {
-   "abstract" : "It's new $module",
+   "abstract" : "It's Sub::Retry like module in AnyEvent",
    "author" : [
       "maedama <maedama85@gmail.com>"
    ],

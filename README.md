@@ -5,6 +5,7 @@ AnyEvent::Sub::Retry
 # SYNOPSIS
 
     use AnyEvent::Sub::Retry;
+    # Try 3 times with 1 second interval
     my $cv = retry 3, 1, sub {
         my $cv = AE::cv;
         ### do something

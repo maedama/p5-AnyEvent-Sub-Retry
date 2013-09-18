@@ -36,4 +36,4 @@ it under the same terms as Perl itself.
 
 # AUTHOR
 
-maedama <maedama@gmail.com>
+maedama <maedama85@gmail.com>

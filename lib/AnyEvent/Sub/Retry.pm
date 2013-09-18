@@ -52,7 +52,7 @@ __END__
 
 =head1 NAME
 
-AnyEvent::Sub::Retry - It's new Sub::Retry like module
+AnyEvent::Sub::Retry
 
 =head1 SYNOPSIS
 
@@ -65,13 +65,16 @@ AnyEvent::Sub::Retry - It's new Sub::Retry like module
         } else {
             $cv->send("success!");
         }
+        return $cv;
     }
     my $result = $cv->recv;
 
 
 =head1 DESCRIPTION
 
-AnyEvent::Sub::Retry is ...
+AnyEvent::Sub::Retry is Sub::Retry like module in AnyEvent.
+In AnyEvent::Sub::Retry, code ref that is execute MUST returrn AnyEvent::CondVar object,  and MUST execute $cv->send or $cv->croak on case of error or success.
+
 
 =head1 LICENSE
 

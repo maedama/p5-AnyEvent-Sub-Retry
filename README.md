@@ -14,13 +14,15 @@ AnyEvent::Sub::Retry
         } else {
             $cv->send("success!");
         }
+        return $cv; # Shoud return cv
     }
     my $result = eval { $cv->recv; }
 
 
 # DESCRIPTION
 
-AnyEvent::Sub::Retry is Sub::Retry like module in AnyEvent
+AnyEvent::Sub::Retry is Sub::Retry like module in AnyEvent.
+In AnyEvent::Sub::Retry, code ref that is execute MUST returrn AnyEvent::CondVar object, and MUST execute $cv->send or $cv->croak on case of error or success.
 
 # LICENSE
 

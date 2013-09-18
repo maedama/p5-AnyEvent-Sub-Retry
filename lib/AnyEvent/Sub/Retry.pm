@@ -14,7 +14,13 @@ sub retry {
     my $all_cv = AE::cv;
     my $timer;
     my $try ; $try = sub {
-        my $cv = $code_ref->();
+        my $cv = eval { $code_ref->() };
+        if ($@) {
+            undef $try;
+            $all_cv->croak(sprintf("code_ref died with message:%s", $@));
+            return;
+        } 
+        
         unless ($cv && ref($cv) eq 'AnyEvent::CondVar') {
             undef $try;
             $all_cv->croak(sprintf("code_ref does not return condvar ref:%s", ref($cv)));

@@ -32,7 +32,20 @@ subtest 'no retry' => sub {
         eval { $cv->recv; };
         like $@, qr/oh no!/;
         is $call_count, 1;
-    }
+    };
+
+    subtest 'croaked' => sub {
+        my $call_count = 0;
+        my $t;
+        my $code_ref = sub {
+            $call_count ++;
+            die "oh no!";
+        };
+        my $cv = retry 2, 1, $code_ref;
+        eval { $cv->recv; };
+        like $@, qr/oh no!/;
+        is $call_count, 1, 'no retry is done when croaked'; 
+    };
 };
 
 subtest 'with retry' => sub {

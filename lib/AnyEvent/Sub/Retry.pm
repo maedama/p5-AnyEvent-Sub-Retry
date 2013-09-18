@@ -16,6 +16,7 @@ sub retry {
     my $try ; $try = sub {
         my $cv = $code_ref->();
         unless ($cv && ref($cv) eq 'AnyEvent::CondVar') {
+            undef $try;
             $all_cv->croak(sprintf("code_ref does not return condvar ref:%s", ref($cv)));
             return;
         } 

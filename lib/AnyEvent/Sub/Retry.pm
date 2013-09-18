@@ -87,6 +87,11 @@ AnyEvent::Sub::Retry is Sub::Retry like module in AnyEvent.
 In AnyEvent::Sub::Retry, code ref that is executed MUST returrn AnyEvent::CondVar object.
 Coderef MUST execute $cv->send or $cv->croak on case of error or success.
 
+=head1 METHODS
+
+=head1 FUNCTIONS
+
+=head2 retry($count, $interval_second, $code_ref) : AnyEvent::CondVar
 
 =head1 LICENSE
 

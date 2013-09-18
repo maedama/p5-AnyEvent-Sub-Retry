@@ -1,14 +1,25 @@
 # NAME
 
-AnyEvent::Sub::Retry - It's new $module
+AnyEvent::Sub::Retry
 
 # SYNOPSIS
 
     use AnyEvent::Sub::Retry;
+    my $cv = retry 3, 1, sub {
+        my $cv = AE::cv;
+        ### do something
+        if ($error) {
+            $cv->croak("error");
+        } else {
+            $cv->send("success!");
+        }
+    }
+    my $result = eval { $cv->recv; }
+
 
 # DESCRIPTION
 
-AnyEvent::Sub::Retry is ...
+AnyEvent::Sub::Retry is Sub::Retry like module in AnyEvent
 
 # LICENSE
 

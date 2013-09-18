@@ -9,47 +9,52 @@ our @EXPORT_OK = qw/retry/;
 our $VERSION = "0.01";
 
 sub retry {
-    my ($retry_count, $retry_interval, $code_ref) = @_;
+    my ( $retry_count, $retry_interval, $code_ref ) = @_;
 
     my $all_cv = AE::cv;
     my $timer;
-    my $try ; $try = sub {
+    my $try;
+    $try = sub {
         my $cv = eval { $code_ref->() };
         if ($@) {
             undef $try;
-            $all_cv->croak(sprintf("code_ref died with message:%s", $@));
+            $all_cv->croak( sprintf( "code_ref died with message:%s", $@ ) );
             return;
-        } 
-        
-        unless ($cv && ref($cv) eq 'AnyEvent::CondVar') {
+        }
+
+        unless ( $cv && ref($cv) eq 'AnyEvent::CondVar' ) {
             undef $try;
-            $all_cv->croak(sprintf("code_ref does not return condvar ref:%s", ref($cv)));
+            $all_cv->croak(
+                sprintf( "code_ref does not return condvar ref:%s", ref($cv) )
+            );
             return;
-        } 
-        $cv->cb(sub {
-            my @vals = eval { shift->recv };
-            if ($@) {
-                $retry_count--;
-                if ($retry_count > 0) {
-                    $timer = AnyEvent->timer(
-                        cb    => sub { $try->(); undef $timer;},
-                        after => $retry_interval,
-                    );
-                } else {
-                    undef $try;
-                    $all_cv->croak($@);
+        }
+        $cv->cb(
+            sub {
+                my @vals = eval { shift->recv };
+                if ($@) {
+                    $retry_count--;
+                    if ( $retry_count > 0 ) {
+                        $timer = AnyEvent->timer(
+                            cb => sub { $try->(); undef $timer; },
+                            after => $retry_interval,
+                        );
+                    }
+                    else {
+                        undef $try;
+                        $all_cv->croak($@);
+                    }
                 }
-            } else {
-                undef $try;
-                $all_cv->send(@vals);
+                else {
+                    undef $try;
+                    $all_cv->send(@vals);
+                }
             }
-        });
+        );
     };
     $try->();
     return $all_cv;
 }
-
-
 
 1;
 __END__

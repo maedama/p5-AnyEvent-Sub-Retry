@@ -29,9 +29,11 @@ sub retry {
                         after => $retry_interval,
                     );
                 } else {
+                    undef $try;
                     $all_cv->croak($@);
                 }
             } else {
+                undef $try;
                 $all_cv->send(@vals);
             }
         });

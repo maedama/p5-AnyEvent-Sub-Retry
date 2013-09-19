@@ -1,6 +1,6 @@
 # NAME
 
-AnyEvent::Sub::Retry
+AnyEvent::Sub::Retry - retry $n times
 
 # SYNOPSIS
 

@@ -1,11 +1,10 @@
 # NAME
 
-AnyEvent::Sub::Retry - retry $n times
+AnyEvent::Sub::Retry - retry $n times in AnyEvent
 
 # SYNOPSIS
 
     use AnyEvent::Sub::Retry;
-    # Try 3 times with 1 second interval
     my $cv = retry 3, 1, sub {
         my $cv = AE::cv;
         ### do something
@@ -14,18 +13,23 @@ AnyEvent::Sub::Retry - retry $n times
         } else {
             $cv->send("success!");
         }
-        return $cv; # Shoud return cv
+        return $cv;
     }
-    my $result = eval { $cv->recv; }
+    my $result = $cv->recv;
+
 
 
 # DESCRIPTION
 
 AnyEvent::Sub::Retry is Sub::Retry like module in AnyEvent.
-
 In AnyEvent::Sub::Retry, code ref that is executed MUST returrn AnyEvent::CondVar object.
+Coderef MUST execute $cv->send or $cv->croak on case of error or success.
 
-Code ref MUST execute $cv->send or $cv->croak on case of error or success.
+# METHODS
+
+# FUNCTIONS
+
+## retry($count, $interval\_second, $code\_ref) : AnyEvent::CondVar
 
 # LICENSE
 

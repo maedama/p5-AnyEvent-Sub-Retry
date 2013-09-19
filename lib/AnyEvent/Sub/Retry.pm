@@ -2,11 +2,12 @@ package AnyEvent::Sub::Retry;
 use 5.008005;
 use strict;
 use warnings;
-use AnyEvent;
+our $VERSION = "0.01";
 use parent qw/Exporter/;
+use AnyEvent;
+
 our @EXPORT = qw/retry/;
 
-our $VERSION = "0.01";
 
 sub retry {
     my ( $retry_count, $retry_interval, $code_ref ) = @_;
@@ -63,7 +64,7 @@ __END__
 
 =head1 NAME
 
-AnyEvent::Sub::Retry
+AnyEvent::Sub::Retry - retry $n times in AnyEvent
 
 =head1 SYNOPSIS
 

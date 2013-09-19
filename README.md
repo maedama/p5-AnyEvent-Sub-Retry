@@ -6,11 +6,9 @@ AnyEvent::Sub::Retry - retry $n times in AnyEvent
 
     use AnyEvent::Sub::Retry;
     use AnyEvent::Socket;
-
     my $guard;
     my $cv = retry 3, 1, sub {
         my $cv = AE::cv;
-        ### do something
         $guard = tcp_connect "www.google.com", "http", sub {
             my ($fh) = @_;
             if ($fh) {

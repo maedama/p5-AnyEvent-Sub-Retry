@@ -2,6 +2,9 @@ Revision history for Perl extension AnyEvent-Sub-Retry
 
 {{$NEXT}}
 
+0.02 2013-09-19T03:28:41Z
+    - fixed readme
+
 0.01 2013-09-19T02:10:55Z
 
     - original version

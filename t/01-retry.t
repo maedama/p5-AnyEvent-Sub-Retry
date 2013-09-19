@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Test::More;
 
-use AnyEvent::Sub::Retry qw(retry);
+use AnyEvent::Sub::Retry;
 
 
 subtest 'no retry' => sub {

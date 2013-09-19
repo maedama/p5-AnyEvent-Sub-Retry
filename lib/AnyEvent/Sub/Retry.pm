@@ -3,8 +3,8 @@ use 5.008005;
 use strict;
 use warnings;
 use AnyEvent;
-use Exporter qw(import);
-our @EXPORT_OK = qw/retry/;
+use parent qw/Exporter/;
+our @EXPORT = qw/retry/;
 
 our $VERSION = "0.01";
 

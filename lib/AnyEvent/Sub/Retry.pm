@@ -80,7 +80,6 @@ AnyEvent::Sub::Retry - retry $n times in AnyEvent
             } else {
                 $cv->croak("unable to connect: $!");
             }
-            return $cv;
         };
         return $cv;
     };

@@ -69,18 +69,22 @@ AnyEvent::Sub::Retry - retry $n times in AnyEvent
 =head1 SYNOPSIS
 
     use AnyEvent::Sub::Retry;
+    use AnyEvent::Socket;
+    my $guard;
     my $cv = retry 3, 1, sub {
         my $cv = AE::cv;
-        ### do something
-        if ($error) {
-            $cv->croak("error");
-        } else {
-            $cv->send("success!");
-        }
+        $guard = tcp_connect "www.google.com", "http", sub {
+            my ($fh) = @_;
+            if ($fh) {
+                $cv->send($fh);
+            } else {
+                $cv->croak("unable to connect: $!");
+            }
+            return $cv;
+        };
         return $cv;
-    }
-    my $result = $cv->recv;
-
+    };
+    my $fh = $cv->recv;
 
 =head1 DESCRIPTION
 

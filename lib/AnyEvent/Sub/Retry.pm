@@ -10,11 +10,14 @@ our @EXPORT = qw/retry/;
 
 
 sub retry {
-    my ( $retry_count, $retry_interval, $code_ref ) = @_;
+    my ( $retry_count, $retry_interval, $code_ref, $retry_if ) = @_;
+    $retry_if ||= sub { return $@ };
 
     my $all_cv = AE::cv;
+    my @errors;
     my $timer;
     my $try;
+
     $try = sub {
         my $cv = eval { $code_ref->() };
         if ($@) {
@@ -33,18 +36,13 @@ sub retry {
         $cv->cb(
             sub {
                 my @vals = eval { shift->recv };
-                if ($@) {
-                    $retry_count--;
-                    if ( $retry_count > 0 ) {
-                        $timer = AnyEvent->timer(
-                            cb => sub { $try->(); undef $timer; },
-                            after => $retry_interval,
-                        );
-                    }
-                    else {
-                        undef $try;
-                        $all_cv->croak($@);
-                    }
+                if ( my $e = $retry_if->(@vals) ) {
+                    push @errors, $e;
+                    $all_cv->end;
+                    $timer = AnyEvent->timer(after => $retry_interval, cb => sub {
+                        $try->();
+                        undef $timer;
+                    });
                 }
                 else {
                     undef $try;
@@ -53,7 +51,14 @@ sub retry {
             }
         );
     };
+    $all_cv->begin(sub {
+        my $cv = shift;
+        undef $try;
+        $cv->croak(\@errors);
+    }) for 1 .. $retry_count;
+
     $try->();
+
     return $all_cv;
 }
 

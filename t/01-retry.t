@@ -30,7 +30,7 @@ subtest 'no retry' => sub {
         };
         my $cv = retry 1, 1, $code_ref;
         eval { $cv->recv; };
-        like $@, qr/oh no!/;
+        like $@->[0], qr/oh no!/;
         is $call_count, 1;
     };
 
@@ -51,7 +51,6 @@ subtest 'no retry' => sub {
 subtest 'with retry' => sub {
     my $call_count = 0;
     my $t;
-    my $now = AnyEvent->time;
     my $code_ref = sub {
         $call_count ++;
         my $cv = AE::cv;
@@ -70,11 +69,25 @@ subtest 'with retry' => sub {
     my $cv = retry 2, 0.1, $code_ref;
     is_deeply([$cv->recv], ['foo', 'var']);
     is $call_count, 2;
-    
-    my $t_diff = AnyEvent->time - $now;
-    ok ($t_diff > 0.09 && $t_diff < 0.11) or note $t_diff;;
 };
 
+subtest 'retry_if' => sub {
+    my $call_count = 0;
+    my $t;
+    my $code_ref = sub {
+        $call_count ++;
+        my $cv = AE::cv;
+        $t = AnyEvent->timer(cb => sub { $cv->send('error') });
+        return $cv;
+    };
+    my $retry_if = sub {
+        my $res = shift;
+        return $res eq "error" ? 1 : 0;
+    };
+    my $cv = retry 2, 0.00001, $code_ref, $retry_if;
+    eval { $cv->recv };
+    is $call_count, 2;
+};
 
 done_testing;
 

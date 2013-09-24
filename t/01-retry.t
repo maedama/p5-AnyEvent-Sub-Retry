@@ -51,7 +51,6 @@ subtest 'no retry' => sub {
 subtest 'with retry' => sub {
     my $call_count = 0;
     my $t;
-    my $now = AnyEvent->time;
     my $code_ref = sub {
         $call_count ++;
         my $cv = AE::cv;
@@ -71,8 +70,6 @@ subtest 'with retry' => sub {
     is_deeply([$cv->recv], ['foo', 'var']);
     is $call_count, 2;
     
-    my $t_diff = AnyEvent->time - $now;
-    ok ($t_diff > 0.09 && $t_diff < 0.11) or note $t_diff;;
 };
 
 
